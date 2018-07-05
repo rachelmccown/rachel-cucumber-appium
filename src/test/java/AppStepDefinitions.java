@@ -40,15 +40,16 @@ public class AppStepDefinitions {
         driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"),capabilities);
     }
 
-    @And("^I (.*) (\\d+) and (\\d+)$")
+    @And("^I (.*) (-?\\d+) and (-?\\d+)$")
     public void calculate(String function, int input1, int input2){
 
         function = function.toLowerCase();
 
         switch(function){
-            case("add"): driver.findElement(By.id("com.android.calculator2:id/digit_" + String.valueOf(input1))).click();
+            case("add"):
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input1));
                 driver.findElement(By.id("com.android.calculator2:id/op_add")).click();
-                driver.findElement(By.id("com.android.calculator2:id/digit_" + String.valueOf(input2))).click();
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input2));
                 break;
         }
 
@@ -57,13 +58,18 @@ public class AppStepDefinitions {
 
     }
 
-    @Then("^the result is (\\d+)$")
-    public void getResult(int result){
+    @Then("^the result is (.*)$")
+    public void getResult(String result){
 
-        int out = Integer.parseInt(output.getText());
+        String one = result;
+        String two = output.getText();
+
+        int expected = Integer.parseInt(one);
+        int actual = Integer.parseInt(two);
+
 
         if(output!= null) {
-            Assert.assertEquals(result, out);
+            Assert.assertEquals(expected, actual);
         }
     }
 
