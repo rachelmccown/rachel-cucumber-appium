@@ -6,7 +6,11 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,8 +39,11 @@ public class AppStepDefinitions {
                 capabilities.setCapability("appPackage", "com.android.calculator2");
                 capabilities.setCapability("appActivity", "com.android.calculator2.Calculator");
                 break;
+            case("Out of Milk"):
+                capabilities.setCapability("appPackage", "com.capigami.outofmilk");
+                capabilities.setCapability("appActivity", "com.capigami.outofmilk.MainActivity");
+                break;
         }
-
         driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"),capabilities);
     }
 
@@ -44,7 +51,6 @@ public class AppStepDefinitions {
     public void calculate(String function, int input1, int input2){
 
         function = function.toLowerCase();
-
         switch(function){
             case("add"):
                 driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input1));
@@ -52,25 +58,33 @@ public class AppStepDefinitions {
                 driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input2));
                 break;
         }
-
         driver.findElement(By.id("com.android.calculator2:id/eq")).click();
         output = (MobileElement) driver.findElement(By.id("com.android.calculator2:id/result"));
+    }
 
+    @And("^I go to the (.*)$")
+    public void goTo(String page){
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.capigami.outofmilk:id/action_skip")));
+        driver.findElement(By.id("com.capigami.outofmilk:id/action_skip")).click();
     }
 
     @Then("^the result is (.*)$")
     public void getResult(String result){
 
-        String one = result;
-        String two = output.getText();
-
-        int expected = Integer.parseInt(one);
-        int actual = Integer.parseInt(two);
-
-
+        String expected = result;
+        String actual = output.getText();
         if(output!= null) {
             Assert.assertEquals(expected, actual);
         }
+    }
+
+    @Then("^the page displays (.*)$")
+    public void pageDisplay(String obj){
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.capigami.outofmilk:id/shopping_list_instructions")));
+        WebElement instructions = driver.findElement(By.id("com.android.calculator2:id/shopping_list_instructions "));
+        Assert.assertTrue(instructions.isDisplayed());
     }
 
 }

@@ -17,6 +17,8 @@ Feature: Navigate an App
     |10   |-10    |0      |
   #  |-1   |-1     |-2     |
 
+  @runMe
   Scenario: Check Out of Milk App
     When I open the Out of Milk app
-    Then the page displays Shopping List
+    And I go to the Main Page
+    Then the page displays Shopping List Instructions
