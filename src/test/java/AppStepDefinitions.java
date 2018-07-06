@@ -13,11 +13,12 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AppStepDefinitions {
 
-    AndroidDriver driver;
+    AndroidDriver<MobileElement> driver;
     DesiredCapabilities capabilities;
 
     @Before
@@ -57,7 +58,7 @@ public class AppStepDefinitions {
                 break;
             case("Nav Bar"):
                 driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-                MobileElement navigation_drawer = (MobileElement) driver.findElementByAccessibilityId("Open navigation drawer");
+                MobileElement navigation_drawer = driver.findElementByAccessibilityId("Open navigation drawer");
                 navigation_drawer.click();
                 break;
             case("Recipe Book"):
@@ -115,6 +116,18 @@ public class AppStepDefinitions {
         String expected = "Items in list: " + itemCount;
         String actual = list.getText();
         Assert.assertEquals(expected, actual);
+    }
+
+    @Then("^(.*) is a category$")
+    public void checkList(String cat){
+        boolean exists = false;
+        List<MobileElement> list = driver.findElementsByClassName("android.widget.TextView");
+        for (MobileElement m: list) {
+            if(m.getText().equals(cat)){
+                exists = true;
+            }
+        }
+        Assert.assertTrue(exists);
     }
 
 }

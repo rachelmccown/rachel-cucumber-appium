@@ -25,3 +25,4 @@ Background:
   Scenario:
     When I go to the Options
     And in categories I add Sauces
+    Then Sauces is a category
