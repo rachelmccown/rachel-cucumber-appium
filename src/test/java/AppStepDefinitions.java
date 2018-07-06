@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public class AppStepDefinitions {
 
@@ -47,21 +48,6 @@ public class AppStepDefinitions {
         driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"),capabilities);
     }
 
-    @And("^I (.*) (-?\\d+) and (-?\\d+)$")
-    public void calculate(String function, int input1, int input2){
-
-        function = function.toLowerCase();
-        switch(function){
-            case("add"):
-                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input1));
-                driver.findElement(By.id("com.android.calculator2:id/op_add")).click();
-                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input2));
-                break;
-        }
-        driver.findElement(By.id("com.android.calculator2:id/eq")).click();
-        output = (MobileElement) driver.findElement(By.id("com.android.calculator2:id/result"));
-    }
-
     @And("^I go to the (.*)$")
     public void goTo(String page){
         WebDriverWait wait = new WebDriverWait(driver, 30);
@@ -69,13 +55,14 @@ public class AppStepDefinitions {
         driver.findElement(By.id("com.capigami.outofmilk:id/action_skip")).click();
     }
 
-    @Then("^the result is (.*)$")
-    public void getResult(String result){
-
-        String expected = result;
-        String actual = output.getText();
-        if(output!= null) {
-            Assert.assertEquals(expected, actual);
+    @And("^I add (.*)$")
+    public void addItemToList(String item){
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        String [] addItems = item.split(",");
+        WebElement searchBar = driver.findElement(By.id("com.capigami.outofmilk:id/inputFieldAutoCompleteView"));
+        for (String s : addItems) {
+            searchBar.sendKeys(s);
+            driver.findElement(By.id("com.capigami.outofmilk:id/submit")).click();
         }
     }
 
@@ -83,8 +70,16 @@ public class AppStepDefinitions {
     public void pageDisplay(String obj){
         WebDriverWait wait = new WebDriverWait(driver, 30);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.capigami.outofmilk:id/shopping_list_instructions")));
-        WebElement instructions = driver.findElement(By.id("com.android.calculator2:id/shopping_list_instructions "));
+        WebElement instructions = driver.findElement(By.id("com.capigami.outofmilk:id/shopping_list_instructions"));
         Assert.assertTrue(instructions.isDisplayed());
+    }
+
+    @Then("^there is (\\d+) items? on the list$")
+    public void isItemOnList(String itemCount){
+        WebElement list = driver.findElement(By.id("com.capigami.outofmilk:id/num_items_list"));
+        String expected = "Items in list: " + itemCount;
+        String actual = list.getText();
+        Assert.assertEquals(expected, actual);
     }
 
 }

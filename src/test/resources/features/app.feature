@@ -1,24 +1,19 @@
 Feature: Navigate an App
 
-#Background:
-#  Given I open up the App
+Background:
+  When I open the Out of Milk app
 
-  Scenario Outline: Addition on the Calculator App
-    When I open the Calculator app
-    And I add <int1> and <int2>
-    Then the result is <result>
+  Scenario: Check Out of Milk App Opens
+    When I go to the Main Page
+    Then the page displays Shopping List Instructions
 
-    Examples: Add Some Numbers
-    |int1|int2|result|
-    |3   |3   |6     |
-    |20  |21  |41    |
-    |857 |746 |1603  |
-    |90539|6038217|6128756|
-    |10   |-10    |0      |
-  #  |-1   |-1     |-2     |
+  Scenario: Add an item to the list
+    When I go to the Main Page
+    And I add Cucumber
+    Then there is 1 item on the list
 
   @runMe
-  Scenario: Check Out of Milk App
-    When I open the Out of Milk app
-    And I go to the Main Page
-    Then the page displays Shopping List Instructions
+  Scenario: Add an item to the list
+    When I go to the Main Page
+    And I add Cucumber, Relish, Water, Lemons, Chocolate, Lettuce, Chicken
+    Then there is 7 items on the list
