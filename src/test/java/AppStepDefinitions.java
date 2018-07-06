@@ -20,7 +20,6 @@ public class AppStepDefinitions {
 
     AndroidDriver driver;
     DesiredCapabilities capabilities;
-    MobileElement output;
 
     @Before
     public void setup(){
@@ -50,9 +49,26 @@ public class AppStepDefinitions {
 
     @And("^I go to the (.*)$")
     public void goTo(String page){
+
         WebDriverWait wait = new WebDriverWait(driver, 30);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.capigami.outofmilk:id/action_skip")));
-        driver.findElement(By.id("com.capigami.outofmilk:id/action_skip")).click();
+        switch(page){
+            case("Main Page"):
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.capigami.outofmilk:id/action_skip")));
+                driver.findElement(By.id("com.capigami.outofmilk:id/action_skip")).click();
+                break;
+            case("Nav Bar"):
+                driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+                MobileElement navigation_drawer = (MobileElement) driver.findElementByAccessibilityId("Open navigation drawer");
+                navigation_drawer.click();
+                break;
+            case("Recipe Book"):
+                MobileElement recipeBook = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("/hierarchy/android.widget.FrameLayout" +
+                        "/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget." +
+                        "FrameLayout/android.support.v4.widget.DrawerLayout/android.widget.FrameLayout/android.support.v7.widget." +
+                        "RecyclerView/android.support.v7.widget.LinearLayoutCompat[4]/android.widget.CheckedTextView")));
+                recipeBook.click();
+                break;
+        }
     }
 
     @And("^I add (.*)$")
@@ -64,6 +80,14 @@ public class AppStepDefinitions {
             searchBar.sendKeys(s);
             driver.findElement(By.id("com.capigami.outofmilk:id/submit")).click();
         }
+    }
+
+    @And("^I find a recipe for (.*)$")
+    public void createRecipe(String dish){
+        driver.findElement(By.id("com.capigami.outofmilk:id/browse_epicurious")).click();
+        driver.findElement(By.xpath("//android.webkit.WebView[@content-desc=\"Epicurious " +
+                "– Recipes, Menu Ideas, Videos & Cooking Tips\"]/android.view.View/android.view" +
+                ".View[2]/android.view.View[2]")).sendKeys(dish);
     }
 
     @Then("^the page displays (.*)$")
