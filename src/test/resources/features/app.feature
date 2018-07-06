@@ -23,4 +23,5 @@ Background:
 
   @runMe
   Scenario:
-    When I
+    When I go to the Options
+    And in categories I add Sauces

@@ -6,7 +6,6 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -68,6 +67,9 @@ public class AppStepDefinitions {
                         "RecyclerView/android.support.v7.widget.LinearLayoutCompat[4]/android.widget.CheckedTextView")));
                 recipeBook.click();
                 break;
+            case("Options"):
+                driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+                driver.findElementByAccessibilityId("More options").click();
         }
     }
 
@@ -88,6 +90,15 @@ public class AppStepDefinitions {
         driver.findElement(By.xpath("//android.webkit.WebView[@content-desc=\"Epicurious " +
                 "– Recipes, Menu Ideas, Videos & Cooking Tips\"]/android.view.View/android.view" +
                 ".View[2]/android.view.View[2]")).sendKeys(dish);
+    }
+
+    @And("^in categories I add (.*)$")
+    public void addCategory(String cat){
+        driver.findElement(By.xpath("\t/hierarchy/android.widget.FrameLayout/android.widget." +
+                "FrameLayout/android.widget.ListView/android.widget.LinearLayout[7]")).click();
+        driver.findElement(By.id("com.capigami.outofmilk:id/action_create_category")).click();
+        driver.findElement(By.id("com.capigami.outofmilk:id/custom")).sendKeys(cat);
+        driver.findElement(By.id("android:id/button1")).click();
     }
 
     @Then("^the page displays (.*)$")
