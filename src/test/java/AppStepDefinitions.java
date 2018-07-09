@@ -28,6 +28,8 @@ public class AppStepDefinitions {
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "Nexus 5X API 25");
         capabilities.setCapability("platformVersion", "7.1.1");
+        capabilities.setCapability("unicodeKeyboard", "true");
+        capabilities.setCapability("resetKeyboard", "true");
 
     }
 
@@ -43,6 +45,9 @@ public class AppStepDefinitions {
                 capabilities.setCapability("appPackage", "com.capigami.outofmilk");
                 capabilities.setCapability("appActivity", "com.capigami.outofmilk.MainActivity");
                 break;
+            case("Chrome"):
+                capabilities.setCapability("appPackage", "com.android.chrome");
+                capabilities.setCapability("appActivity", "com.google.android.apps.chrome.Main");
         }
         driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"),capabilities);
     }
@@ -100,6 +105,21 @@ public class AppStepDefinitions {
         driver.findElement(By.id("com.capigami.outofmilk:id/action_create_category")).click();
         driver.findElement(By.id("com.capigami.outofmilk:id/custom")).sendKeys(cat);
         driver.findElement(By.id("android:id/button1")).click();
+    }
+
+    @And("^I search for (.*)$")
+    public void search(String term){
+
+        WebDriverWait wait = new WebDriverWait(driver, 30);
+        MobileElement element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/terms_accept")));
+        element.click();
+        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/negative_button")));
+        element.click();
+        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/search_box_text")));
+        element.click();
+        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/ntp_content")));
+        element.sendKeys(term);
+        System.out.println("Test01");
     }
 
     @Then("^the page displays (.*)$")
