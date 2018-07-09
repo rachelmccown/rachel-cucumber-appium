@@ -4,12 +4,15 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,13 +27,13 @@ public class AppStepDefinitions {
     @Before
     public void setup(){
 
-        capabilities = new DesiredCapabilities();
+        capabilities = new DesiredCapabilities().android();
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "Nexus 5X API 25");
         capabilities.setCapability("platformVersion", "7.1.1");
-        capabilities.setCapability("unicodeKeyboard", "true");
-        capabilities.setCapability("resetKeyboard", "true");
 
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\hd80s\\node_modules\\appium-chromedriver\\chromedriver\\win\\chromedriver.exe");
+        //WebDriverManager.chromedriver().setup();
     }
 
     @When("^I open the (.*) app$")
@@ -46,10 +49,12 @@ public class AppStepDefinitions {
                 capabilities.setCapability("appActivity", "com.capigami.outofmilk.MainActivity");
                 break;
             case("Chrome"):
+                capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
+                capabilities.setBrowserName("Chrome");
                 capabilities.setCapability("appPackage", "com.android.chrome");
                 capabilities.setCapability("appActivity", "com.google.android.apps.chrome.Main");
         }
-        driver = new AndroidDriver<MobileElement>(new URL("http://0.0.0.0:4723/wd/hub"),capabilities);
+        driver = new AndroidDriver<>(new URL("http://0.0.0.0:4723/wd/hub"), capabilities);
     }
 
     @And("^I go to the (.*)$")
@@ -79,7 +84,7 @@ public class AppStepDefinitions {
         }
     }
 
-    @And("^I add (.*)$")
+    @And("^I add (.*) to the list$")
     public void addItemToList(String item){
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         String [] addItems = item.split(",");
@@ -119,7 +124,7 @@ public class AppStepDefinitions {
         element.click();
         element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/ntp_content")));
         element.sendKeys(term);
-        System.out.println("Test01");
+        element.sendKeys(Keys.RETURN);
     }
 
     @Then("^the page displays (.*)$")
@@ -148,6 +153,33 @@ public class AppStepDefinitions {
             }
         }
         Assert.assertTrue(exists);
+    }
+
+    MobileElement output;
+
+    @And("^I (.*) the numbers (-?\\d+) and (-?\\d+)$")
+    public void calculate(String function, int input1, int input2){
+
+        function = function.toLowerCase();
+        switch(function){
+            case("add"):
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input1));
+                driver.findElement(By.id("com.android.calculator2:id/op_add")).click();
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input2));
+                break;
+        }
+        driver.findElement(By.id("com.android.calculator2:id/eq")).click();
+        output = driver.findElement(By.id("com.android.calculator2:id/result"));
+    }
+
+    @Then("^the result is (.*)$")
+    public void getResult(String result){
+
+        String expected = result;
+        String actual = output.getText();
+        if(output != null) {
+            Assert.assertEquals(expected, actual);
+        }
     }
 
 }
