@@ -51,6 +51,12 @@ Feature: Navigate an App
 #    And I find a recipe for Pasta
 
   @calculator
+  Scenario: Addition on the Calculator App
+    When I open the Calculator app
+    And I add the numbers -2 and -2
+    Then the result is -4
+
+  @calculator
   Scenario Outline: Addition on the Calculator App
     When I open the Calculator app
     And I add the numbers <int1> and <int2>
@@ -63,4 +69,4 @@ Feature: Navigate an App
 #      |857  |746    |1603   |
 #      |90539|6038217|6128756|
 #      |10   |-10    |0      |
-      |-1   |-1     |−22     |
+      |-1   |-1     |−22    |

@@ -27,7 +27,7 @@ public class AppStepDefinitions {
     @Before
     public void setup(){
 
-        capabilities = new DesiredCapabilities().android();
+        capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "Nexus 5X API 25");
         capabilities.setCapability("platformVersion", "7.1.1");
