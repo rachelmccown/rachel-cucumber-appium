@@ -1,8 +1,9 @@
-Feature: Navigate an App
+@groceries
+Feature: Navigate an app for tracking groceries
 
-#Background:
-#  When I open the Out of Milk app
-#  And I go to the Main Page
+Background:
+  When I open the Out of Milk app
+  And I go to the Main Page
 
   Scenario: Check Out of Milk App Opens
     When I open the Out of Milk app
@@ -39,34 +40,8 @@ Feature: Navigate an App
     And in categories I add Sauces
     Then Sauces is a category
 
-#  @chrome
-#  Scenario: Start up Chrome
-#    When I open the Chrome app
-#    And I search for Star Wars
-
 #    # Complicated but gets to the Pasta search
 #  Scenario: Create a Recipe
 #    When I go to the Nav Bar
 #    And I go to the Recipe Book
 #    And I find a recipe for Pasta
-
-  @calculator
-  Scenario: Addition on the Calculator App
-    When I open the Calculator app
-    And I add the numbers -2 and -2
-    Then the result is -4
-
-  @calculator
-  Scenario Outline: Addition on the Calculator App
-    When I open the Calculator app
-    And I add the numbers <int1> and <int2>
-    Then the result is <result>
-
-    Examples: Add Some Numbers
-      |int1 |int2   |result |
-#      |3    |3      |6      |
-#      |20   |21     |41     |
-#      |857  |746    |1603   |
-#      |90539|6038217|6128756|
-#      |10   |-10    |0      |
-      |-1   |-1     |−22    |

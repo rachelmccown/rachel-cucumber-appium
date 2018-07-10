@@ -8,7 +8,10 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -23,17 +26,23 @@ public class AppStepDefinitions {
 
     AndroidDriver<MobileElement> driver;
     DesiredCapabilities capabilities;
+    MobileElement output;
 
     @Before
     public void setup(){
+        capabilities = DesiredCapabilities.android();
 
-        capabilities = new DesiredCapabilities();
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "Chrome");
+        capabilities.setBrowserName("Chrome");
+
         capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "Nexus 5X API 25");
-        capabilities.setCapability("platformVersion", "7.1.1");
+//        capabilities.setCapability("deviceName", "Nexus 5X API 25");
+//        capabilities.setCapability("platformVersion", "7.1.1");
+        capabilities.setCapability("deviceName", "Nexus 5X API 27");
+        capabilities.setCapability("platformVersion", "8.1");
 
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\hd80s\\node_modules\\appium-chromedriver\\chromedriver\\win\\chromedriver.exe");
-        //WebDriverManager.chromedriver().setup();
+        WebDriverManager.chromedriver().setup();
     }
 
     @When("^I open the (.*) app$")
@@ -116,11 +125,15 @@ public class AppStepDefinitions {
     public void search(String term){
 
         WebDriverWait wait = new WebDriverWait(driver, 30);
-        MobileElement element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/terms_accept")));
-        element.click();
-        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/negative_button")));
-        element.click();
-        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/search_box_text")));
+//        MobileElement element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/terms_accept")));
+//        element.click();
+//        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/negative_button")));
+//        element.click();
+//        MobileElement element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/search_box_text")));
+//        MobileElement element = driver.findElement(By.id("com.android.chrome:id/search_box_text"));
+//        element.click();
+        MobileElement element = driver.findElement(By.id("com.android.chrome:id/url_bar"));
+        element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/url_bar")));
         element.click();
         element = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("com.android.chrome:id/ntp_content")));
         element.sendKeys(term);
@@ -155,17 +168,19 @@ public class AppStepDefinitions {
         Assert.assertTrue(exists);
     }
 
-    MobileElement output;
-
     @And("^I (.*) the numbers (-?\\d+) and (-?\\d+)$")
     public void calculate(String function, int input1, int input2){
 
         function = function.toLowerCase();
+        String formula;
         switch(function){
             case("add"):
-                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input1));
-                driver.findElement(By.id("com.android.calculator2:id/op_add")).click();
-                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(Integer.toString(input2));
+                formula = Integer.toString(input1) + "+" + Integer.toString(input2);
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(formula);
+                break;
+            case("subtract"):
+                formula = Integer.toString(input1) + "-(" + Integer.toString(input2) + ")";
+                driver.findElement(By.id("com.android.calculator2:id/formula")).sendKeys(formula);
                 break;
         }
         driver.findElement(By.id("com.android.calculator2:id/eq")).click();
